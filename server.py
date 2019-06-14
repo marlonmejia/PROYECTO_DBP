@@ -63,7 +63,7 @@ def create_user():
 
 @app.route('/authenticate', methods = ["POST"])
 def authenticate():
-    time.sleep(3)
+    #time.sleep(1.5)
     message = json.loads(request.data)
     username = message['username']
     password = message['password']
@@ -99,38 +99,19 @@ def logout():
     return render_template('index.html')
 
 
-@app.route('/messages/<user_from_id>/<user_to_id>', methods = ['GET'])
-def get_messages(user_from_id, user_to_id ):
+@app.route('/resume/<id>', methods = ['GET'])
+def get_resume(id):
     db_session = db.getSession(engine)
-    messages = db_session.query(entities.Message).filter(
-        entities.Message.user_from_id == user_from_id).filter(
-        entities.Message.user_to_id == user_to_id
-    )
-    data = []
-    for message in messages:
-        data.append(message)
-    return Response(json.dumps(data, cls=connector.AlchemyEncoder), mimetype='application/json')
+    resumes = db_session.query(entities.Publish).filter(
+        entities.Publish.id == id)
+    for resume in resumes:
+        js = json.dumps(resume, cls=connector.AlchemyEncoder)
+        return  Response(js, status=200, mimetype='application/json')
+
+    message = { 'status': 404, 'message': 'Not Found'}
+    return Response(message, status=404, mimetype='application/json')
 
 
-@app.route('/gabriel/messages', methods = ["POST"])
-def create_message():
-    data = json.loads(request.data)
-    user_to_id = data['user_to_id']
-    user_from_id = data['user_from_id']
-    content = data['content']
-
-    message = entities.Message(
-    user_to_id = user_to_id,
-    user_from_id = user_from_id,
-    content = content)
-
-    #2. Save in database
-    db_session = db.getSession(engine)
-    db_session.add(message)
-    db_session.commit()
-
-    response = {'message': 'created'}
-    return Response(json.dumps(response, cls=connector.AlchemyEncoder), status=200, mimetype='application/json')
 
 if __name__ == '__main__':
     app.secret_key = ".."
