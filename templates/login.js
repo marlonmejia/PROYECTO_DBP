@@ -1,5 +1,6 @@
 function getData(){
-        $('#loading').show();
+        $("#carga").attr("hidden",false);
+        $('#action').html("Authenticating...");
         var username = $('#username').val();
         var password = $('#password').val();
         var message = JSON.stringify({
@@ -14,10 +15,14 @@ function getData(){
             data : message,
             dataType:'json',
             success: function(response){
-                //$('#action').html(response['statusText']);
+                //alert(JSON.stringify(response));
+                $("#carga").attr("hidden",true);
+                $('#action').html(response['statusText']);
             },
             error: function(response){
                 //alert(JSON.stringify(response));
+                $("#carga").attr("hidden",true);
+                $('#action').html(response['statusText']);
             }
         });
     }
