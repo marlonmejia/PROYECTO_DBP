@@ -16,13 +16,14 @@ function getData(){
             dataType:'json',
             success: function(response){
                 //alert(JSON.stringify(response));
-                $("#carga").attr("hidden",true);
-                $('#action').html(response['statusText']);
             },
             error: function(response){
                 //alert(JSON.stringify(response));
+                if(response['status'] == 401){
                 $("#carga").attr("hidden",true);
                 $('#action').html(response['statusText']);
+                }else{
+                window.location.replace("/static/buscador.html");}
             }
         });
     }
